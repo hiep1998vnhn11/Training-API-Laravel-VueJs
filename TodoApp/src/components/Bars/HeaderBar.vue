@@ -2,7 +2,7 @@
   <div>
     <a-menu v-model="current" mode="horizontal">
       <a-menu-item key="mail"><router-link to="/">Home</router-link></a-menu-item>
-      <a-menu-item key="app"> <a-icon type="appstore" />Navigation Two </a-menu-item>
+      <a-menu-item key="app"><router-link to="/profile">myProfile</router-link>  </a-menu-item>
       <a-sub-menu>
         <span slot="title" class="submenu-title-wrapper"
           ><a-icon type="setting" />Navigation Three - Submenu</span
@@ -29,11 +29,14 @@
           >Navigation Four - Link</a
         >
       </a-menu-item>
-      <a-menu-item>
+      <a-menu-item v-if="!loggedIn">
           <router-link to='/login'>Login</router-link>
       </a-menu-item>
-      <a-menu-item>
+      <a-menu-item v-if="!loggedIn">
           <router-link to='/register'>Register</router-link>
+      </a-menu-item>
+      <a-menu-item v-if="loggedIn">
+        <router-link to="/logout">Logout</router-link>
       </a-menu-item>
     </a-menu>
   </div>
@@ -41,7 +44,13 @@
 
 
 <script>
+import axios from 'axios'
 export default {
+  computed: {
+    loggedIn(){
+      return this.$store.getters.loggedIn
+    }
+  },
   data() {
     return {
       current: ['mail'],
