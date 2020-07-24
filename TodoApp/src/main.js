@@ -12,7 +12,7 @@ import store from './stores'
 Vue.config.productionTip = false
 Vue.use(Antd);
 
-axios.defaults.baseURL = 'http://hieptransotatek.dev.com/api'
+axios.defaults.baseURL = 'http://hieptran.dev.com/api'
 
 router.beforeEach((to, from, next) => {
   if(to.matched.some(record => record.meta.requiresAuth)){

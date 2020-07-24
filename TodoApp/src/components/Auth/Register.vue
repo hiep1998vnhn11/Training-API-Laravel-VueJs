@@ -5,7 +5,7 @@
   <a-form
     id="components-form-demo-normal-login"
     class="login-form"
-    @submit.prevent="onRegister"
+    @submit.prevent="register"
   >
     <a-form-item>
       <a-input
@@ -74,7 +74,7 @@ export default {
         password: this.password
       })
       .then(response => {
-        this.$router.push({name: 'Profile'})
+        this.$router.push({name: 'Login'})
       })
     }
   },

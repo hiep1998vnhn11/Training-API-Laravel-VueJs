@@ -16,7 +16,7 @@ const actions = {
     
     async login({state, commit}, user){
         const response = await axios
-            .post('/auth/login', {
+            .post('/login', {
                 email: user.email,
                 password: user.password
             })
@@ -31,16 +31,25 @@ const actions = {
         commit('login', response.data)
     },
 
-    async register({commit}, user){
-        const response = await axios
-            .post('/auth/register',
-            {user});
-        commit ('register', response.data);
+    async register(context, data){
+        return new Promise((resolve, reject) => {
+            axios.post('/register', {
+                name: data.name,
+                email: data.email,
+                password: data.password
+            })
+            .then(response => {
+                resolve(response)
+            })
+            .catch(error => {
+                reject(error)
+            })
+        })
     },
 
     retrieveToken(context, credentials){
         return new Promise((resolve, reject) => {
-            axios.post('/auth/login', {
+            axios.post('/login', {
                 email: credentials.email,
                 password: credentials.password
             })
@@ -62,7 +71,7 @@ const actions = {
         axios.defaults.headers.common['Authorization'] = 'Bearer' + context.state.token
         if(context.getters.loggedIn){
             return new Promise((resolve, reject) => {
-                axios.post('/auth/logout')
+                axios.post('/logout')
                 .then(response => {
                     localStorage.removeItem('access_token')
                     context.commit('destroyToken')
