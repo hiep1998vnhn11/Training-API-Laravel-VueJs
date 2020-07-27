@@ -27,11 +27,20 @@ Route::group([
     Route::post('logout', 'AuthController@logout');
     Route::post('refresh', 'AuthController@refresh');
     Route::post('me', 'AuthController@me');
+    Route::group([
+        'prefix' => 'todo',
+        'middleware' => 'role:viewer|admin|super-admin'
+    ], function () {
+        Route::post('get', 'AuthController@getTodo');
+        Route::post('create', 'AuthController@createTodo');
+        Route::post('delete/{todo}', 'AuthController@deleteTodo');
+        Route::post('update/{todo}', 'AuthController@editTodo');
+    });
 });
-
 Route::post('register', 'RegisterController@register');
 
 Route::group([
+    'middleware' => ['role:admin|super-admin'],
     'prefix' => 'admin'
 ], function($router){
     Route::post('users', 'AdminController@index');
@@ -39,4 +48,10 @@ Route::group([
     Route::post('delete/{user}', 'AdminController@delete');
     Route::post('create', 'AdminController@create');
     Route::post('update/{user}', 'AdminController@update');
+    Route::group(['prefix' => 'todo'], function($router){
+        Route::post('get', 'TodoController@index');
+        Route::post('{user}/get', 'TodoController@get');
+        Route::post('delete/{todo}', 'TodoController@destroy');
+    });
 });
+

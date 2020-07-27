@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Tymon\JWTAuth\Contracts\JWTSubject;
 use Spatie\Permission\Traits\HasRoles;
+use App\Todo;
 
 
 class User extends Authenticatable implements JWTSubject
@@ -40,6 +41,10 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    public function todo(){
+        return $this->hasMany('App\Todo', 'user_id', 'id');
+    }
+
     public function getJWTIdentifier()
     {
         return $this->getKey();
@@ -53,5 +58,11 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function getTodoByUserId($id){
+        return Todo::select('todos.id', 'todos.title', 'todos.description', 'todos.created_at')
+        ->join('users', 'users.id', '=', 'todos.user_id')
+        ->all();
     }
 }

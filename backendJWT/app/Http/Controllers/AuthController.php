@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CreateTodoRequest;
+use App\Http\Requests\RegisterRequest;
 use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\Request;
 use App\User;
+use App\Todo;
 
 
 class AuthController extends Controller
@@ -20,28 +23,14 @@ class AuthController extends Controller
     {
         $this->middleware('auth:api', ['except' => ['login']]);
     }
-
     /**
      * Get a JWT via given credentials.
      *
      * @return \Illuminate\Http\JsonResponse
      */
 
-    public function register(Request $request){
-        $this->validate($request, [
-            'name' => 'required|min:4',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|min:4|max:255',
-        ], [
-            'name.required' => 'You did not input your name',
-            'name.min' => 'Name at least 4 character',
-            'email.required' => 'You did not input your email!',
-            'email.email' => 'You should input EMAIL',
-            'email.unique' => 'This email was exist',
-            'password.required' => 'You did not input password!',
-            'password.min' => 'password at least 4 character!',
-            'password.max' => 'password maximum 25 character!',
-        ]);
+    public function register(RegisterRequest $request){
+        
         $user = new User;
         $user->name = $request->name;
         $user->email = $request->email;
@@ -55,8 +44,7 @@ class AuthController extends Controller
     public function login()
     {
         $credentials = request(['email', 'password']);
-
-        if (! $token = auth()->attempt($credentials)) {
+        if (!$token = auth()->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -81,7 +69,6 @@ class AuthController extends Controller
     public function logout()
     {
         auth()->logout();
-
         return response()->json(['message' => 'Successfully logged out']);
     }
 
@@ -96,6 +83,60 @@ class AuthController extends Controller
     }
 
     /**
+     * get all Todo this user
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getTodo(){
+        return $this->respondWithTodoByUserId(auth()->user()->id);
+    }
+    /**
+     * Create a todo
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createTodo(CreateTodoRequest $request){
+        $todo = new Todo;
+        $todo->title = $request->title;
+        $todo->description = $request->description;
+        $todo->user_id = auth()->user()->id;
+        $todo->save();
+        return response()->json([
+            'message' => 'Create Todo success!',
+            'todo' => $todo
+        ]);
+    }
+    /**
+     * Delete a todo
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function deleteTodo(Todo $todo){
+        $todo->delete();
+        return response()->json([
+            'message' => 'Delete Todo success!',
+            'todo' => $todo
+        ]);
+    }
+    /**
+     * Edit todo
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function editTodo(CreateTodoRequest $request,Todo $todo){
+        if($todo->user_id != auth()->user()->id)
+            return response()->json(['message' => 'edit failed! Can not edit todo other user!']);
+        $todo->title = $request->title;
+        $todo->description = $request->description;
+        $todo->save();
+        return response()->json([
+            'message' => 'Update Todo success!',
+            'todo' => $todo
+        ]);
+    }
+
+
+    /**
      * Get the token array structure.
      *
      * @param  string $token
@@ -108,6 +149,13 @@ class AuthController extends Controller
             'access_token' => $token,
             'token_type' => 'bearer',
             'expires_in' => auth()->factory()->getTTL() * 60
+        ]);
+    }
+
+    protected function respondWithTodoByUserId($userId){
+        return response()->json([
+            'message' => 'Get todos success',
+            'todo' => Todo::where('user_id', $userId)->get()
         ]);
     }
 }
