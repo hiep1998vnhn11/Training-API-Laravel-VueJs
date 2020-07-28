@@ -49,7 +49,7 @@
 <script>
 export default {
   beforeCreate() {
-    this.form = this.$form.createForm(this, { name: 'normal_login' });
+    this.form = this.$form.createForm(this, { name: 'normal_login' })
   },
   name: 'login',
   data() {
@@ -61,7 +61,7 @@ export default {
   },
   methods: {
     login(){
-      this.$store.dispatch('retrieveToken', {
+      this.$store.dispatch('login', {
         email: this.email,
         password: this.password
       })
@@ -69,7 +69,7 @@ export default {
         this.$router.push({name: 'Profile'})
       })
       .catch(error => {
-        console.log('fail')
+        alert('Loggin failed! Please input Email and Password!')
       })
     }
   },

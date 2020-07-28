@@ -10,6 +10,7 @@ use Illuminate\Http\Client\Request as ClientRequest;
 use Illuminate\Http\Request;
 use App\User;
 use App\Todo;
+use Illuminate\Support\Facades\Log;
 
 
 class AuthController extends Controller
@@ -58,6 +59,7 @@ class AuthController extends Controller
      */
     public function me()
     {
+        Log::channel('info_user_history')->info('Showing user profile for user: ' . auth()->user());
         return response()->json(auth()->user());
     }
 
@@ -101,10 +103,7 @@ class AuthController extends Controller
         $todo->description = $request->description;
         $todo->user_id = auth()->user()->id;
         $todo->save();
-        return response()->json([
-            'message' => 'Create Todo success!',
-            'todo' => $todo
-        ]);
+        return response()->json($todo);
     }
     /**
      * Delete a todo
@@ -113,10 +112,7 @@ class AuthController extends Controller
      */
     public function deleteTodo(Todo $todo){
         $todo->delete();
-        return response()->json([
-            'message' => 'Delete Todo success!',
-            'todo' => $todo
-        ]);
+        return response()->json($todo);
     }
     /**
      * Edit todo
@@ -153,9 +149,6 @@ class AuthController extends Controller
     }
 
     protected function respondWithTodoByUserId($userId){
-        return response()->json([
-            'message' => 'Get todos success',
-            'todo' => Todo::where('user_id', $userId)->get()
-        ]);
+        return response()->json(Todo::where('user_id', $userId)->get());
     }
 }

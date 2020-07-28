@@ -1,4 +1,5 @@
 <template>
+<div style="padding:30px">
   <a-card hoverable style="width: 300px">
     <img
       slot="cover"
@@ -10,11 +11,27 @@
       <a-icon key="edit" type="edit" />
       <a-icon key="ellipsis" type="ellipsis" />
     </template>
-    <a-card-meta title="Card title" description="This is the description">
+    <a-card-meta :title="currentUser.name" :description="currentUser.email">
       <a-avatar
         slot="avatar"
         src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
       />
+      <div>
+        </div>
     </a-card-meta>
   </a-card>
+</div>
 </template>
+
+<script>
+import {mapGetters, mapActions, mapState} from 'vuex'
+export default {
+  computed: mapGetters(['currentUser']),
+  created(){
+      this.getCurrentUser();
+  },
+  methods: {
+    ...mapActions(['getCurrentUser']),
+  }
+}
+</script>

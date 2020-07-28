@@ -3,24 +3,24 @@
     <a-menu v-model="current" mode="horizontal">
       <a-menu-item key="mail"><router-link to="/">Home</router-link></a-menu-item>
       <a-menu-item key="app"><router-link to="/profile">myProfile</router-link>  </a-menu-item>
-      <a-sub-menu>
+      <a-sub-menu v-if="loggedIn">
         <span slot="title" class="submenu-title-wrapper"
-          ><a-icon type="setting" />Navigation Three - Submenu</span
+          ><a-icon type="setting" />Components</span
         >
-        <a-menu-item-group title="Item 1">
+        <a-menu-item-group title="Todo">
           <a-menu-item key="setting:1">
-            Option 1
+             <router-link to="/todo">My todos</router-link> 
           </a-menu-item>
           <a-menu-item key="setting:2">
-            Option 2
+            Create todo
           </a-menu-item>
         </a-menu-item-group>
-        <a-menu-item-group title="Item 2">
+        <a-menu-item-group title="Admin Only">
           <a-menu-item key="setting:3">
-            Option 3
+            <router-link to="/admin">All User</router-link> 
           </a-menu-item>
           <a-menu-item key="setting:4">
-            Option 4
+            Create User
           </a-menu-item>
         </a-menu-item-group>
       </a-sub-menu>

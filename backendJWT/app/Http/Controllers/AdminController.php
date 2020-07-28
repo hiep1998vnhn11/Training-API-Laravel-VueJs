@@ -16,19 +16,14 @@ class AdminController extends Controller
      */
     public function index()
     {
-        return response()->json(User::all());
+        $users = User::all();
+        foreach($users as $user){
+            $user->getRoleNames();
+        }
+        return response()->json($users);
     }
 
-    public function role(){
-        if(auth()->user()->hasRole('admin'))
-        return response()->json([
-            'message' => 'admin'
-        ]);
-        else return response()->json([
-            'message' => 'not admin'
-        ]);
-
-    }
+    
 
     /**
      * Show the form for creating a new resource.

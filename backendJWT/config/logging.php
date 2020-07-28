@@ -40,6 +40,13 @@ return [
             'channels' => ['single'],
             'ignore_exceptions' => false,
         ],
+        'info_user_history' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/info_user_history.log'),
+            'level' => 'debug',
+            'days' => 0,
+            'permission' => 777,
+        ],
 
         'single' => [
             'driver' => 'single',
