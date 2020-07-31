@@ -7,10 +7,13 @@ import 'ant-design-vue/dist/antd.css';
 import Antd from 'ant-design-vue';
 import axios from 'axios'
 import store from './stores'
+import Cookies from 'js-cookie'
+import VueToastify from "vue-toastify";
 
-
+Vue.use(VueToastify);
 Vue.config.productionTip = false
-Vue.use(Antd);
+Vue.use(Antd)
+Vue.use(Cookies)
 
 axios.defaults.baseURL = 'http://myjwtapi.dev.com/api'
 

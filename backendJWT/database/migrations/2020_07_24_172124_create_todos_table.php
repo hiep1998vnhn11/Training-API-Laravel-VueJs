@@ -20,7 +20,7 @@ class CreateTodosTable extends Migration
                   ->on('users')
                   ->onDelete('cascade');
             $table->text('title');
-            $table->longText('description');
+            $table->longText('description')->nullable();
             $table->boolean('completed')->default(false);
             $table->timestamps();
         });

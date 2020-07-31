@@ -1,19 +1,19 @@
 import axios from 'axios'
+import Cookies from 'js-cookie'
+
 
 const state = {
     users: [],
     currentUser: {},
-    todo: [],
-    token: localStorage.getItem('access_token') || null,
+    token: Cookies.get('access_token') || null,
     setHeader(){
-        axios.defaults.headers.common['Authorization'] = 'Bearer' + localStorage.getItem('access_token')
+        axios.defaults.headers.common['Authorization'] = 'Bearer' + Cookies.get('access_token')
     }
 }
 
 const getters = {
     allUser: state => state.users,
     currentUser: state => state.currentUser,
-    allTodo: state => state.todo,
     loggedIn(state){
         return state.token !== null
     }
@@ -23,57 +23,39 @@ const actions = {
     async fetchUser(context){
         context.state.setHeader()
         const response = await axios.post('/admin/users');
-        context.commit('setUser', response.data)
-    },
-    async getCurrentUser(context){
-        context.state.setHeader()
-        const response = await axios.post('/auth/me');
-        context.commit('setCurrentUser', response.data)
-    },
-    async fetchTodo(context){
-        context.state.setHeader()
-        const reponse = await axios.post('/auth/todo/get');
-        context.commit('setTodo', reponse.data)
-    },
-    async deleteTodo(context, idTodo){
-        context.state.setHeader()
-        const response = await axios.post(`/auth/todo/delete/${idTodo}`)
-        context.commit('removeTodo', idTodo)
-
-    },
-    async addTodo(context, todo){
-        context.state.setHeader()
-        const response = await axios.post('/auth/todo/create', {
-            title: todo.title,
-            description: todo.description
-        });
-        context.commit('addTodo', response.data)
+        context.commit('SET_USER', response.data)
     },
 
     async login(context, user){
-        const response = await axios.post('/auth/login', {
+        try{
+            const auth = await axios.post('/auth/login', {
                 email: user.email,
                 password: user.password
-        })
-        const token = response.data.access_token
-        localStorage.setItem('access_token', token)
-        axios.defaults.headers.common['Authorization'] = 'Bearer' + token
-        context.commit('retrieveToken', token) 
+            })
+            const token = auth.data.access_token
+            axios.defaults.headers.common['Authorization'] = 'Bearer'+token
+            const currentUserApi = await axios.post('/auth/me')
+            Cookies.set('access_token', token)
+            context.commit('SET_CURRENT_USER', currentUserApi.data) 
+            context.commit('RETRIEVE_TOKEN', token) 
+        } catch(err){
+            console.log(err)
+        }
     },
 
     async register(context, data){
-        const response = await axios.post('register', {
+        const authRegister = await axios.post('register', {
             name: data.name,
             email: data.email,
             password: data.password
         })
-        console.log(response)
+        console.log(authRegister)
     },
 
     async deleteUser(context, idUser){
         context.state.setHeader()
-        const response = await axios.post(`/admin/delete/${idUser}`)
-        context.commit('removeUser', idUser)
+        const deleteUserApi = await axios.post(`/admin/delete/${idUser}`)
+        context.commit('REMOVE_USER', idUser)
     },
 
     destroyToken(context){
@@ -82,16 +64,16 @@ const actions = {
             return new Promise((resolve, reject) => {
                 axios.post('/auth/logout')
                 .then(response => {
-                    localStorage.removeItem('access_token')
-                    context.commit('destroyToken')
+                    Cookies.remove('access_token')
+                    context.commit('DESTROY_TOKEN')
                     resolve(response)
                     // console.log(token)
                     //console.log(response);
                 })
                 .catch(error => {
                     // console.log(error);
-                    localStorage.removeItem('access_token')
-                    context.commit('destroyToken')
+                    Cookies.remove('access_token')
+                    context.commit('DESTROY_TOKEN')
                     reject(error)
                 })
             })
@@ -100,18 +82,15 @@ const actions = {
 }
 
 const mutations = {
-    setCurrentUser: (state, currentUser) => state.currentUser = currentUser,
-    retrieveToken: (state, token) => state.token = token,
-    destroyToken: (state) => {
+    SET_CURRENT_USER: (state, currentUser) => state.currentUser = currentUser,
+    RETRIEVE_TOKEN: (state, token) => state.token = token,
+    DESTROY_TOKEN: (state) => {
         state.token = null,
         state.currentUser = null,
         state.users = []
     },
-    setUser: (state, users) => (state.users = users),
-    setTodo: (state, todo) => (state.todo=todo),
-    addTodo: (state, todo) => state.todo.unshift(todo),
-    removeTodo: (state, idTodo) => state.todo = state.todo.filter(todo=>todo.id!=idTodo),
-    removeUser: (state, idUser) => state.users = state.users.filter(users=>users.id!=idUser)
+    SET_USER: (state, users) => (state.users = users),
+    REMOVE_USER: (state, idUser) => state.users = state.users.filter(users=>users.id!=idUser)
 }
 export default{
     state,

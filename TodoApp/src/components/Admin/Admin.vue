@@ -74,8 +74,8 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   computed: mapGetters(['allUser']),
-  created(){
-      this.fetchUser();
+  created() {
+    this.fetchUser()
   },
   data() {
     return {
@@ -88,7 +88,7 @@ export default {
         {
           title: 'id',
           width: '5%',
-          dataIndex: 'id',
+          dataIndex: 'id'
         },
         {
           title: 'email',
@@ -97,7 +97,7 @@ export default {
           scopedSlots: {
             filterDropdown: 'filterDropdown',
             filterIcon: 'filterIcon',
-            customRender: 'customRender',
+            customRender: 'customRender'
           },
           onFilter: (value, record) =>
             record.name
@@ -107,15 +107,15 @@ export default {
           onFilterDropdownVisibleChange: visible => {
             if (visible) {
               setTimeout(() => {
-                this.searchInput.focus();
-              }, 0);
+                this.searchInput.focus()
+              }, 0)
             }
           },
         },
         {
           title: 'name',
           dataIndex: 'name',
-          width: '15%',
+          width: '15%'
         },
         {
           title: 'Created at',
@@ -125,20 +125,19 @@ export default {
         {
           title: 'actions',
           dataIndex: 'actions',
-          scopedSlots: { customRender: 'actions' },
-        },
-      ],
-    };
+          scopedSlots: { customRender: 'actions' }
+        }
+      ]
+    }
   },
   methods: {
     ...mapActions(['fetchUser', 'deleteUser']),
-    
     onCellChange(key, dataIndex, value) {
-      const dataSource = [...this.dataSource];
-      const target = dataSource.find(item => item.key === key);
+      const dataSource = [...this.dataSource]
+      const target = dataSource.find(item => item.key === key)
       if (target) {
-        target[dataIndex] = value;
-        this.dataSource = dataSource;
+        target[dataIndex] = value
+        this.dataSource = dataSource
       }
     },
     onDelete(id) {
@@ -155,22 +154,18 @@ export default {
           console.log(error)
         })
     },
-    handleCreate() {
-      
-    },
     handleSearch(selectedKeys, confirm, dataIndex) {
-      confirm();
-      this.searchText = selectedKeys[0];
-      this.searchedColumn = dataIndex;
+      confirm()
+      this.searchText = selectedKeys[0]
+      this.searchedColumn = dataIndex
     },
 
     handleReset(clearFilters) {
-      clearFilters();
-      this.searchText = '';
-    },
-  
-  },
-};
+      clearFilters()
+      this.searchText = ''
+    }
+  }
+}
 </script>
 <style>
 .editable-cell {

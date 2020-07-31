@@ -45,7 +45,7 @@ class AuthController extends Controller
     public function login()
     {
         $credentials = request(['email', 'password']);
-        if (!$token = auth()->attempt($credentials)) {
+        if (!$token = auth()->setTTL(150)->attempt($credentials)) {
             return response()->json(['error' => 'Unauthorized'], 401);
         }
 
@@ -59,7 +59,6 @@ class AuthController extends Controller
      */
     public function me()
     {
-        Log::channel('info_user_history')->info('Showing user profile for user: ' . auth()->user());
         return response()->json(auth()->user());
     }
 

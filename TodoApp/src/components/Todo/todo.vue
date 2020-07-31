@@ -40,11 +40,11 @@ export default {
     computed: mapGetters([
         'allTodo',
     ]),
-    created(){
-      this.fetchTodo();
+  created() {
+      this.fetchTodo()
   },
   methods: {
-    ...mapActions(['fetchTodo', 'addTodo', 'deleteTodo']),
+    ...mapActions(['addTodo', 'deleteTodo', 'fetchTodo']),
     showModalAdd(){
         this.visibleAdd = true
     },
@@ -55,6 +55,7 @@ export default {
         e.preventDefault();
         this.addTodo(this.createTodo)
         this.visibleAdd=false
+        this.$vToastify.success('Create Toto success!')
     },
     handleEdit(e){
         e.preventDefault();
@@ -64,15 +65,10 @@ export default {
         if(confirm('Do you want to delete this todo?'))
             this.deleteTodo(todoId)
             .then(response => {
-                <template>
-                    <a-alert message="Delete Success!" type="success" />
-                </template>
+                this.$vToastify.success('Delete Todo success!')
             })
             .catch(error => {
-                <template>
-                    <a-alert message="Delete Failed! Some thing went wrong!" type="error" />
-                </template>
-                console.log(error)
+                this.$vToastify.error(error)
             })
     }
   },
@@ -82,6 +78,7 @@ export default {
           visibleEdit: false,
           id: 0,
           title: '',
+          alert1: false,
           description: '',
           createTodo: {
               title: '',

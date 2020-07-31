@@ -27,11 +27,7 @@
 import {mapGetters, mapActions, mapState} from 'vuex'
 export default {
   computed: mapGetters(['currentUser']),
-  created(){
-      this.getCurrentUser();
-  },
   methods: {
-    ...mapActions(['getCurrentUser']),
   }
 }
 </script>

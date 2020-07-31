@@ -60,20 +60,21 @@ export default {
     }
   },
   methods: {
-    login(){
+    login() {
       this.$store.dispatch('login', {
         email: this.email,
         password: this.password
       })
-      .then(response => {
-        this.$router.push({name: 'Profile'})
-      })
-      .catch(error => {
-        alert('Loggin failed! Please input Email and Password!')
-      })
+        .then(response => {
+          this.$router.push({name: 'Profile'})
+        })
+        .catch(error => {
+          alert('Loggin failed! Please input Email and Password!')
+          console.log(error)
+        })
     }
-  },
-};
+  }
+}
 </script>
 <style>
 #components-form-demo-normal-login .login-form {
