@@ -1,7 +1,16 @@
 {
     "cSpell.words": [
         "hieptran",
+        "laravel",
         "myjwtapi",
+        "set",
+        "set ttl",
+        "ttl",
         "vuex"
+    ],
+    "cSpell.ignoreWords": [
+        "set",
+        "set ttl",
+        "ttl"
     ]
 }

@@ -1,10 +1,9 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-
 const state = {
     users: [],
-    currentUser: {},
+    currentUser: null,
     token: Cookies.get('access_token') || null,
     setHeader(){
         axios.defaults.headers.common['Authorization'] = 'Bearer' + Cookies.get('access_token')
@@ -25,7 +24,11 @@ const actions = {
         const response = await axios.post('/admin/users');
         context.commit('SET_USER', response.data)
     },
-
+    async getCurrentUser(context){
+        context.state.setHeader()
+        const currentUserApi = await axios.post('/auth/me')
+        context.commit('SET_CURRENT_USER', currentUserApi.data)
+    },
     async login(context, user){
         try{
             const auth = await axios.post('/auth/login', {
@@ -33,11 +36,12 @@ const actions = {
                 password: user.password
             })
             const token = auth.data.access_token
-            axios.defaults.headers.common['Authorization'] = 'Bearer'+token
-            const currentUserApi = await axios.post('/auth/me')
+            axios.defaults.headers.common['Authorization'] = 'Bearer' + token
+            const UserApi = await axios.post('/auth/me')
             Cookies.set('access_token', token)
-            context.commit('SET_CURRENT_USER', currentUserApi.data) 
             context.commit('RETRIEVE_TOKEN', token) 
+            context.commit('SET_CURRENT_USER', UserApi.data)
+            console.trace('hello')
         } catch(err){
             console.log(err)
         }

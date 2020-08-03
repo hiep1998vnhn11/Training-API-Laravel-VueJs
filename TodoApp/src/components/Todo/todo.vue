@@ -41,7 +41,7 @@ export default {
         'allTodo',
     ]),
   created() {
-      this.fetchTodo()
+      if(!this.allTodo[0]) this.fetchTodo()
   },
   methods: {
     ...mapActions(['addTodo', 'deleteTodo', 'fetchTodo']),
